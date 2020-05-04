@@ -33,8 +33,6 @@ class PipBuilder(object):
     '''
     REQUIRED_PACKAGES = ['auditwheel']
     SUPPORTED_VERSIONS = {
-        '2.7': 'cp27-cp27m',
-        '2.7u': 'cp27-cp27mu',
         '3.5': 'cp35-cp35m',
         '3.6': 'cp36-cp36m',
         '3.7': 'cp37-cp37m',
@@ -43,7 +41,6 @@ class PipBuilder(object):
 
     if sys.platform.startswith('darwin'):
         REQUIRED_PACKAGES.append('conda_build')
-        del SUPPORTED_VERSIONS['2.7u']
 
     MANY_LINUX_PYTHONS = {
         py_version: '/opt/python/{tag}/bin/python'.format(tag=tag)
