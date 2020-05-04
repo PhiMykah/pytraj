@@ -52,11 +52,13 @@ class PipBuilder(object):
                  pytraj_home,
                  python_versions,
                  use_manylinux=False,
-                 cpptraj_dir=''):
+                 cpptraj_dir='',
+                 validate_only=False):
         self.libcpptraj = ''  # will be updated later
         self.is_osx = sys.platform.startswith('darwin')
         self.python_versions = python_versions
         self.use_manylinux = use_manylinux
+        self.validate_only = validate_only
         if cpptraj_dir:
             self.cpptraj_dir = os.path.abspath(cpptraj_dir)
         else:
@@ -79,10 +81,13 @@ class PipBuilder(object):
     def run(self):
         self.check_cpptraj_and_required_libs()
         for python_version in self.python_versions:
-            self.initialize_env(python_version)
-            self.build_original_wheel(python_version)
-            self.repair_wheel(python_version)
-            self.validate_install(python_version)
+            if self.validate_only:
+                self.validate_install(python_version)
+            else:
+                self.initialize_env(python_version)
+                self.build_original_wheel(python_version)
+                self.repair_wheel(python_version)
+                self.validate_install(python_version)
 
     def initialize_env(self, python_version):
         if not self.use_manylinux:
@@ -158,7 +163,7 @@ class PipBuilder(object):
         env = 'pytraj' + py_version
         # e.g: change 2.7 to 27
         print('Testing pytraj build')
-        whl_file = self._get_wheel_file(py_version, folder='wheelhouse')
+        whl_file = os.path.abspath(self._get_wheel_file(py_version, folder='wheelhouse'))
         print('Testing wheel file {}'.format(whl_file))
         try:
             subprocess.check_call(
@@ -236,6 +241,10 @@ if __name__ == '__main__':
         '--manylinux-docker',
         action='store_true',
         help='If specified, use Python versions from manylinux')
+    parser.add_argument(
+        '--validate-only',
+        action='store_true',
+        help='Only validate the exisint repaired wheel')
     args = parser.parse_args()
 
     tarfile = os.path.abspath(args.tarfile)
@@ -249,7 +258,8 @@ if __name__ == '__main__':
         pytraj_home=pytraj_home,
         python_versions=python_versions,
         use_manylinux=args.manylinux_docker,
-        cpptraj_dir=args.cpptraj_dir)
+        cpptraj_dir=args.cpptraj_dir,
+        validate_only=args.validate_only)
     builder.run()
     # builder.libcpptraj = '../cpptraj/lib/libcpptraj.dylib'
     # builder.validate_install('3.5')
