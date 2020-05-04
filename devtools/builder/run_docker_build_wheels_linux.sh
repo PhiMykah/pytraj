@@ -3,7 +3,6 @@
 set -e
 
 FEEDSTOCK_ROOT=$(cd "$(dirname "$0")/../../"; pwd;)
-# DOCKER_IMAGE=hainm/pytraj-build-box:2020-04-24
 DOCKER_IMAGE=hainm/pytraj-build-box:2019-03
 
 docker info
@@ -25,7 +24,7 @@ fi
 
 ls -la dist
 cd dist
-python ../scripts/build_wheel.py ./pytraj*gz --manylinux-docker --py 3.7
+python ../scripts/build_wheel.py ./pytraj*gz --manylinux-docker --py 3.5 3.6 3.7 3.8
 
 rm -rf scripts/__pycache__
 EOF
