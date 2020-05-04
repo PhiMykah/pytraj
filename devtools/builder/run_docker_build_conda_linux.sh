@@ -2,7 +2,8 @@
 set -e
 
 FEEDSTOCK_ROOT=$(cd "$(dirname "$0")/../../"; pwd;)
-DOCKER_IMAGE=hainm/pytraj-build-box:2020-04.24  # centos-7
+# DOCKER_IMAGE=hainm/pytraj-build-box:2020-04-24  # centos-7
+DOCKER_IMAGE=hainm/pytraj-build-box:2019-03
 
 docker info
 cat << EOF | docker run -i \
