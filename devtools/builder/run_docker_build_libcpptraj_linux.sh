@@ -2,7 +2,7 @@
 set -e
 
 FEEDSTOCK_ROOT=$(cd "$(dirname "$0")/../../"; pwd;)
-DOCKER_IMAGE=hainm/pytraj-build-box:2020-04-24
+DOCKER_IMAGE=hainm/pytraj-build-box:2019-03
 
 docker info
 cat << EOF | docker run -i \
@@ -15,18 +15,10 @@ set -x
 set -e
 cd /feedstock_root/
 
-export PATH="/opt/python/cp38-cp38/bin:\$PATH"
-
-if [ ! -d dist ]; then
-    devtools/mkrelease
-fi
-
 if [ ! -d cpptraj ]; then
     python scripts/install_libcpptraj.py github -openmp
 else
     # (cd cpptraj && git pull && git clean -fdx .)
     python scripts/install_libcpptraj.py -openmp
 fi
-
-rm -rf scripts/__pycache__
 EOF
