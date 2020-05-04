@@ -4,28 +4,18 @@ set -e
 function main(){
     # Must be in pytraj root folder
 
-    # FIXME: turn off for now since they
-    # dont work on my macos (Hai)
-    # cd "${pytraj_root}"
-    # this function will be run in the end of this script
-
-    # create_venv
-    # export PATH="/tmp/pytraj_venv/bin:$PATH"
-
-    # devtools/mkrelease
-    # clone_or_update_cpptraj
+    devtools/mkrelease
+    clone_or_update_cpptraj
 
     # osx
-    # build_libcpptraj_osx
-    # pip_osx
-    # conda_osx
+    build_libcpptraj_osx
+    pip_osx
+    conda_osx
 
     # linux
     build_libcpptraj_linux
     pip_linux
-    # conda_linux
-
-    # rm -rf /tmp/pytraj_venv
+    conda_linux
 }
 
 
@@ -76,7 +66,8 @@ function conda_linux(){
 
 
 function conda_osx(){
-    for pyver in 3.5 3.6 3.7 3.8; do
+    # for pyver in 3.5 3.6 3.7 3.8; do
+    for pyver in 3.8; do
         conda build devtools/conda-recipe/pytraj --py $pyver
         tarfile=`conda build devtools/conda-recipe/pytraj --py $pyver --output`
 
@@ -88,5 +79,4 @@ function conda_osx(){
     done
 }
 
-# pytraj_root="$(realpath $(dirname $(readlink -f $0))/../..)"
 main "$@"
