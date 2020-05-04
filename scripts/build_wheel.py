@@ -234,7 +234,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--py',
         default=None,
-        action="append",
+        nargs='+',
         help='Python version (e.g. 2.7 or 3.8). Default: build all supported versions')
     parser.add_argument(
         '--cpptraj-dir', default='', help='cpptraj dir, optional')
