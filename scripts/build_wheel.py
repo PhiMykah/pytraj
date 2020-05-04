@@ -234,6 +234,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--py',
         default=None,
+        action="append",
         help='Python version (e.g. 2.7 or 3.8). Default: build all supported versions')
     parser.add_argument(
         '--cpptraj-dir', default='', help='cpptraj dir, optional')
@@ -248,9 +249,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     tarfile = os.path.abspath(args.tarfile)
-    python_versions = list(PipBuilder.SUPPORTED_VERSIONS.keys()) if args.py is None else [
-        args.py,
-    ]
+    python_versions = args.py or list(PipBuilder.SUPPORTED_VERSIONS.keys())
+    print(f"Building package for python: {python_versions}")
     # pytraj tar file
     pytraj_home = os.path.dirname(__file__).strip('scripts')
     builder = PipBuilder(
