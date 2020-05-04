@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Assume libcpptraj.so is already built
 set -e
 
 FEEDSTOCK_ROOT=$(cd "$(dirname "$0")/../../"; pwd;)
@@ -22,8 +21,12 @@ if [ ! -d dist ]; then
     devtools/mkrelease
 fi
 
-ls -la dist
-python scripts/build_wheel.py dist/pytraj*gz --manylinux-docker --py 3.8
+if [ ! -d cpptraj ]; then
+    python scripts/install_libcpptraj.py github -openmp
+else
+    # (cd cpptraj && git pull && git clean -fdx .)
+    python scripts/install_libcpptraj.py -openmp
+fi
 
 rm -rf scripts/__pycache__
 EOF
