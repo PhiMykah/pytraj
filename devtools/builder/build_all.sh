@@ -12,12 +12,18 @@ function main(){
     # create_venv
     # export PATH="/tmp/pytraj_venv/bin:$PATH"
 
-    devtools/mkrelease
-    clone_or_update_cpptraj
+    # devtools/mkrelease
+    # clone_or_update_cpptraj
+
+    # osx
+    # build_libcpptraj_osx
+    # pip_osx
+    # conda_osx
+
+    # linux
+    build_libcpptraj_linux
     pip_linux
-    pip_osx
-    conda_linux
-    conda_osx
+    # conda_linux
 
     # rm -rf /tmp/pytraj_venv
 }
@@ -47,10 +53,19 @@ function pip_linux(){
 }
 
 
-function pip_osx(){
-    (cd cpptraj && git clean -fdx .)
+function build_libcpptraj_osx(){
+    # (cd cpptraj && git clean -fdx .)
     export CPPTRAJHOME=`pwd`/cpptraj
     python scripts/install_libcpptraj.py
+}
+
+
+function build_libcpptraj_linux(){
+    bash devtools/builder/run_docker_build_libcpptraj_linux.sh
+}
+
+
+function pip_osx(){
     (cd dist && python ../scripts/build_wheel.py pytraj*.tar.gz)
 }
 
