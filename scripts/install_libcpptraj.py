@@ -170,7 +170,6 @@ def install_libcpptraj(compiler='', build_flag='', n_cpus=4):
         compiler=compiler)
 
     print('configure command: ', cm)
-    # do not use subprocess to avoid split cxx_overwrite command
     subprocess.check_call(cm, shell=True)
 
     if IS_OSX:
