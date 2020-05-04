@@ -36,7 +36,8 @@ function clone_or_update_cpptraj(){
     if [ ! -d cpptraj ]; then
         git clone https://github.com/amber-md/cpptraj
     else
-        (cd cpptraj && git pull && git clean -fdx .)
+        # (cd cpptraj && git pull && git clean -fdx .)
+        echo "bla bla"
     fi
 }
 
