@@ -3,17 +3,23 @@ set -e
 
 function main(){
     # Must be in pytraj root folder
-    cd "${pytraj_root}"
+
+    # FIXME: turn off for now since they
+    # dont work on my macos (Hai)
+    # cd "${pytraj_root}"
     # this function will be run in the end of this script
-    create_venv
-    export PATH="/tmp/pytraj_venv/bin:$PATH"
+
+    # create_venv
+    # export PATH="/tmp/pytraj_venv/bin:$PATH"
+
     devtools/mkrelease
     clone_or_update_cpptraj
     pip_linux
     pip_osx
     conda_linux
     conda_osx
-    rm -rf /tmp/pytraj_venv
+
+    # rm -rf /tmp/pytraj_venv
 }
 
 
@@ -66,5 +72,5 @@ function conda_osx(){
     done
 }
 
-pytraj_root="$(realpath $(dirname $(readlink -f $0))/../..)"
+# pytraj_root="$(realpath $(dirname $(readlink -f $0))/../..)"
 main "$@"
