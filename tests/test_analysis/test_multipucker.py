@@ -16,5 +16,6 @@ def test_multipucker():
 
     print(state.data[1:])
 
-    data = pt.multipucker(traj)
+    data = pt.multipucker(traj=traj, method='altona', amplitude=True, theta=True, 
+                          range360=True, offset=0)
     print(data)
