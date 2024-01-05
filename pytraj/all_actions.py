@@ -3154,6 +3154,10 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     dtype : str, return type
     frame_indices : str
         Not currently utilized
+
+    Returns 
+    ------- 
+    Dataset 
     '''
     # Set name to default if name is not provided
     name = "MyPuckers" if name else ""
