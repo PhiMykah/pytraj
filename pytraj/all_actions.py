@@ -3117,12 +3117,12 @@ def xtalsymm(traj, mask='', options='', ref=None, **kwargs):
 
 @super_dispatch()
 def multipucker(traj=None, top=None, name=None, pucker_types=None,
-                resrange=None, file=None,
+                resrange=None, out=None,
                 method='altona', atom_list=None,
                 amplitude=False, amp_file=None,
                 theta=False, theta_file=None,
                 range360=False, offset=None,
-                dtype='dict',
+                dtype='dataset',
                 frame_indices=None):
     '''
     
@@ -3133,8 +3133,8 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     name : str, Output dataset name
     pucker_types : str
         desired puckertype output (nucleic, furanose, pyranose)
-    resrange : None or array of int
-        range to look for puckers
+    resrange : None or 2-value int tuple
+        range to look for puckers, formatted as (a,b) inclusive
     file : str
         Desired output file
     method : {'altona', 'cremer'}, default 'altona'
@@ -3165,16 +3165,14 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     # Check for desired [<pucker types>] parameter
     #     should be nucleic, furanose, or pyranose
     pucker_types = pucker_types.lower() if pucker_types else ""
-
     # Obtain entire range if range is not provided 
     if resrange:
         # Unsure how multiple ranges should be formatted for cpptraj
         resrange = "resrange " + "-".join(str(i) for i in resrange)
     else:
         resrange = ""
-
     # Set outfile if available
-    out = "out " + file if file else ""
+    _out = "out " + out if out else ""
 
     # Parse atom list puckertype parameter
     #     [puckertype <name>:<a0>:<a1>:<a2>:<a3>:<a4>[:<a5>] ...]
@@ -3199,7 +3197,7 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     offset_ = str(offset) if offset else ""
 
     # Join all params into command for cpptraj to interpret
-    command = " ".join((name, pucker_types, resrange, out, method,
+    command = " ".join((name, pucker_types, resrange, _out, method,
                        _atom_list, amp, theta, _range360, offset_))
     c_dslist, _ = do_action(traj, command, c_action.Action_MultiPucker)
     return get_data_from_dtype(c_dslist, dtype=dtype)
