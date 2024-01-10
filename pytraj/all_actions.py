@@ -3116,11 +3116,11 @@ def xtalsymm(traj, mask='', options='', ref=None, **kwargs):
 
 
 @super_dispatch()
-def multipucker(traj=None, top=None, name=None, pucker_types=None,
+def multipucker(traj=None, top=None, name=None, puckertype=None,
                 resrange=None, out=None,
-                method='altona', atom_list=None,
-                amplitude=False, amp_file=None,
-                theta=False, theta_file=None,
+                method='altona',
+                amplitude=False, amp_out=None,
+                theta=False, theta_out=None,
                 range360=False, offset=None,
                 dtype='dataset',
                 frame_indices=None):
@@ -3131,22 +3131,24 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     traj : Trajectory-like
     top : Topology, optional
     name : str, Output dataset name
-    pucker_types : str
-        desired puckertype output (nucleic, furanose, pyranose)
+    puckertype : str or list of str
+        desired puckertype output (nucleic, furanose, pyranose) or complex type
+        complex type, list of atom types led by puckertype:
+            [<name>,<a0>,<a1>,<a2>,<a3>,<a4>]
     resrange : None or 2-value int tuple
         range to look for puckers, formatted as (a,b) inclusive
     file : str
         Desired output file
     method : {'altona', 'cremer'}, default 'altona'
         use altona or cremer method
-    atom_list, None or array of str
-        List of all atoms for pucker
     amplitude: bool, default False
         calculate amplitude
-    amp_file: str
+    amp_out: str
         amplitude data output file
     theta: bool, default False
         calculate theta
+    theta_out : str
+        theta data output file
     range360: bool
         use 360 or 180 scale
     offset: none or float
@@ -3160,11 +3162,8 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     Dataset 
     '''
     # Set name to default if name is not provided
-    name = "MyPuckers" if name else ""
+    name = name if name else "MyPuckers"
 
-    # Check for desired [<pucker types>] parameter
-    #     should be nucleic, furanose, or pyranose
-    pucker_types = pucker_types.lower() if pucker_types else ""
     # Obtain entire range if range is not provided 
     if resrange:
         # Unsure how multiple ranges should be formatted for cpptraj
@@ -3174,20 +3173,26 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     # Set outfile if available
     _out = "out " + out if out else ""
 
-    # Parse atom list puckertype parameter
-    #     [puckertype <name>:<a0>:<a1>:<a2>:<a3>:<a4>[:<a5>] ...]
-    if atom_list:
-        _atom_list = ":".join(type for type in pucker_types)
-        _atom_list = "puckertype {0}:{1}".format(name, _atom_list)
+    if type(puckertype) == list:
+        # Parse puckertype and atom list parameter
+        #     [puckertype <name>:<a0>:<a1>:<a2>:<a3>:<a4>[:<a5>] ...]
+        # Take name from first index
+        pucker_name = puckertype[0]
+        _puckertype = ":".join(type for type in puckertype[1:])
+        _puckertype = "puckertype {0}:{1}".format(pucker_name, _puckertype)
+    elif type(puckertype) == str:
+        # String of desired [<pucker types>] parameter
+        #     should be nucleic, furanose, or pyranose 
+        _puckertype = puckertype.lower()
     else:
-        _atom_list = ""
+        _puckertype = ""
 
     # Use amp file and set amplitude parameter if called
-    _amp_file= " ampout " + amp_file if amp_file else ""
+    _amp_file= " ampout " + amp_out if amp_out else ""
     amp = "amplitude" + _amp_file if amplitude else ""
 
     # Use theta file and set theta parameter if called
-    _theta_file = " thetaout " + theta_file if theta_file else ""
+    _theta_file = " thetaout " + theta_out if theta_out else ""
     theta = "theta" + _theta_file if theta else ""
 
     # Set whether or not range 360 is included 
@@ -3197,8 +3202,8 @@ def multipucker(traj=None, top=None, name=None, pucker_types=None,
     offset_ = str(offset) if offset else ""
 
     # Join all params into command for cpptraj to interpret
-    command = " ".join((name, pucker_types, resrange, _out, method,
-                       _atom_list, amp, theta, _range360, offset_))
+    command = " ".join((name, _puckertype, resrange, _out, method,
+                        amp, theta, _range360, offset_))
     c_dslist, _ = do_action(traj, command, c_action.Action_MultiPucker)
     return get_data_from_dtype(c_dslist, dtype=dtype)
 
