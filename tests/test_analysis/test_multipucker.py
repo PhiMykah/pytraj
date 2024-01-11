@@ -57,7 +57,7 @@ def test_multipucker_pyranoid():
     state.run()
 
     data_pyranoid = pt.multipucker(traj=traj, name='Pyranoid',
-                                    puckertype=['pyranoid','C1','C2','C3','C4','C5','05'],
+                                    puckertype=['pyranoid','C1','C2','C3','C4','C5','O5'],
                                     method='cremer', out='pyranoid.type.dat', 
                                     amplitude=True, amp_out='pyranoid.type.dat',
                                     theta= True, theta_out='pyranoid.type.dat',
